@@ -2,6 +2,8 @@
 
 A Python script to bulk-download your **MapMyRun / MapMyFitness** workouts as TCX files and upload them to **Strava**.
 
+Works on **Mac, Windows, and Linux**.
+
 ---
 
 ## How It Works
@@ -23,13 +25,18 @@ A Python script to bulk-download your **MapMyRun / MapMyFitness** workouts as TC
 
 ## Installation
 
+**Mac / Linux:**
 ```bash
-# Clone the repo
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git
-cd YOUR_REPO
-
-# Install dependencies
+git clone https://github.com/mitianraushan-oss/mapmyrun-to-strava.git
+cd mapmyrun-to-strava
 pip3 install requests pandas tqdm
+```
+
+**Windows (Command Prompt or PowerShell):**
+```cmd
+git clone https://github.com/mitianraushan-oss/mapmyrun-to-strava.git
+cd mapmyrun-to-strava
+pip install requests pandas tqdm
 ```
 
 ---
@@ -48,9 +55,13 @@ pip3 install requests pandas tqdm
 The script uses your browser cookies to authenticate (same as being logged in on Chrome). You need to do this **once** before running.
 
 1. Open [mapmyfitness.com](https://www.mapmyfitness.com) in **Chrome** and log in
-2. Press `Cmd + Option + I` (Mac) or `F12` (Windows) to open **DevTools**
+2. Open DevTools:
+   - **Mac:** `Cmd + Option + I`
+   - **Windows:** `F12`
 3. Go to the **Network** tab
-4. Refresh the page (`Cmd + R`)
+4. Refresh the page:
+   - **Mac:** `Cmd + R`
+   - **Windows:** `F5`
 5. Click any request to `mapmyfitness.com` in the list
 6. Scroll to **Request Headers** on the right
 7. Find the `cookie:` header and **copy the entire value**
@@ -61,13 +72,28 @@ The script uses your browser cookies to authenticate (same as being logged in on
 
 ## Step 3 — Run the Script
 
+### Mac / Linux
 ```bash
 python3 download_from_csv.py --csv workout.csv --cookies 'PASTE_YOUR_COOKIE_STRING_HERE' --outdir tcx_downloads --limit 109 --delay 1.5
 ```
 
-> ⚠️ **Important:** Run the command on a **single line**. Do not split it across multiple lines.
+### Windows (Command Prompt)
+```cmd
+python download_from_csv.py --csv workout.csv --cookies "PASTE_YOUR_COOKIE_STRING_HERE" --outdir tcx_downloads --limit 109 --delay 1.5
+```
 
-### All Available Options
+### Windows (PowerShell)
+```powershell
+python download_from_csv.py --csv workout.csv --cookies "PASTE_YOUR_COOKIE_STRING_HERE" --outdir tcx_downloads --limit 109 --delay 1.5
+```
+
+> ⚠️ **Important:** Run the command on a **single line**. Do not split it across multiple lines.
+>
+> Note: Mac/Linux use **single quotes** `'` around the cookie string. Windows uses **double quotes** `"`.
+
+---
+
+## All Available Options
 
 | Argument | Required | Default | Description |
 |----------|----------|---------|-------------|
@@ -77,22 +103,26 @@ python3 download_from_csv.py --csv workout.csv --cookies 'PASTE_YOUR_COOKIE_STRI
 | `--limit` | No | All records | Process only the first N workouts |
 | `--delay` | No | `1.5` | Seconds to wait between downloads (avoid rate limiting) |
 
-### Examples
+---
 
-**Download all workouts:**
+## Examples
+
+**Download all workouts (Mac):**
 ```bash
 python3 download_from_csv.py --csv workout.csv --cookies 'YOUR_COOKIES' --outdir tcx_downloads
 ```
 
-**Download only the first 109 workouts:**
+**Download only the first 109 workouts (Mac):**
 ```bash
 python3 download_from_csv.py --csv workout.csv --cookies 'YOUR_COOKIES' --outdir tcx_downloads --limit 109
 ```
 
-**Resume an interrupted download (already downloaded files are skipped automatically):**
-```bash
-python3 download_from_csv.py --csv workout.csv --cookies 'YOUR_COOKIES' --outdir tcx_downloads --limit 109
+**Download all workouts (Windows):**
+```cmd
+python download_from_csv.py --csv workout.csv --cookies "YOUR_COOKIES" --outdir tcx_downloads
 ```
+
+**Resume an interrupted download** — already downloaded files are skipped automatically, just re-run the same command.
 
 ---
 
@@ -148,14 +178,23 @@ Note: Strava allows up to 25 files at a time in bulk upload.
 ## Troubleshooting
 
 ### `error: unrecognized arguments`
-Run the entire command on **one line** — do not use line breaks or `\` continuations.
+Run the entire command on **one line** — do not use line breaks.
 
 ### `Session expired` or `Got HTML (login wall)`
-Your cookies have expired. Go back to Chrome, refresh mapmyfitness.com, and re-copy the `cookie:` header from DevTools. Then re-run — the script will skip already-downloaded files.
+Your cookies have expired. Go back to Chrome, refresh mapmyfitness.com, re-copy the `cookie:` header from DevTools, and re-run. Already downloaded files will be skipped.
 
 ### SSL errors on Mac
 ```bash
 /Applications/Python\ 3.11/Install\ Certificates.command
+```
+
+### `python3` not recognized on Windows
+Use `python` instead of `python3` — Windows uses `python` by default.
+
+### `pip` not found on Windows
+Try `pip3` or run:
+```cmd
+python -m pip install requests pandas tqdm
 ```
 
 ### Some files failed
@@ -171,17 +210,24 @@ Just re-run the same command. The script skips already-downloaded files and retr
 
 ---
 
+## Platform Summary
+
+| | Mac | Windows | Linux |
+|---|---|---|---|
+| Python command | `python3` | `python` | `python3` |
+| pip command | `pip3` | `pip` | `pip3` |
+| Cookie quotes | Single `'` | Double `"` | Single `'` |
+| Open DevTools | `Cmd+Option+I` | `F12` | `F12` |
+| Refresh page | `Cmd+R` | `F5` | `F5` |
+
+---
+
 ## Dependencies
 
 ```
 requests
 pandas
 tqdm
-```
-
-Install with:
-```bash
-pip3 install requests pandas tqdm
 ```
 
 ---

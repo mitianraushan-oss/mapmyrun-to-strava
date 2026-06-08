@@ -8,14 +8,24 @@ Works on **Mac, Windows, and Linux**.
 
 ## ⚠️ Strava Upload Limits — Read First
 
-| Plan | Lifetime TCX uploads | Daily upload limit | Bulk upload (web UI) |
-|------|---------------------|--------------------|----------------------|
-| **Free** | **15 workouts only** | 30 files/day | Up to 25 files at a time |
-| **Paid (Summit)** | Unlimited | 30 files/day | Up to 25 files at a time |
+| Plan | Upload batch size | Daily upload limit |
+|------|------------------|--------------------|
+| **Free** | 15 files at a time | ~30 files/day (2 batches of 15) |
+| **Paid (Summit)** | 15 files at a time | ~30 files/day (2 batches of 15) |
 
-> ⚠️ **Free Strava users:** After 15 TCX uploads, Strava will not accept more file uploads. You will need to log activities manually or upgrade to a paid plan.
+> ⚠️ **Batch size:** You can upload **15 TCX files at a time** via the Strava web UI.
 >
-> ⚠️ **All users:** Maximum **30 files per day**. If you have more, spread uploads across multiple days.
+> ⚠️ **Daily limit:** After uploading ~30 files in a day (2 batches of 15), Strava shows a **"try later"** message. Wait a few hours or try again the next day.
+>
+> 📝 **Note:** The exact lifetime upload limit for free Strava accounts is not fully confirmed. Based on real usage, the practical limit appears to be **30 uploads per day**. If you hit a wall, wait and retry the next day.
+
+### Recommended daily upload plan
+
+| Day | Action |
+|-----|--------|
+| Day 1 | Upload batch 1 (15 files) → wait → Upload batch 2 (15 files) |
+| Day 2 | Upload batch 3 (15 files) → wait → Upload batch 4 (15 files) |
+| ... | Continue until all files uploaded |
 
 ---
 
@@ -25,7 +35,7 @@ Works on **Mac, Windows, and Linux**.
 2. The script reads the CSV, authenticates using your browser session cookies
 3. Optionally filter by date range (e.g. only 2024 workouts)
 4. Downloads each workout as a `.tcx` file
-5. You bulk-upload the TCX files to Strava
+5. You bulk-upload the TCX files to Strava (15 at a time, max ~30/day)
 
 ---
 
@@ -124,7 +134,7 @@ python3 download_from_csv.py --csv workout.csv --cookies 'YOUR_COOKIES' --to-dat
 ### Limit to first N records
 
 ```bash
-python3 download_from_csv.py --csv workout.csv --cookies 'YOUR_COOKIES' --limit 15
+python3 download_from_csv.py --csv workout.csv --cookies 'YOUR_COOKIES' --limit 30
 ```
 
 > ⚠️ **Important:** Run the command on a **single line**. Do not split it across multiple lines.
@@ -149,16 +159,19 @@ python3 download_from_csv.py --csv workout.csv --cookies 'YOUR_COOKIES' --limit 
 
 1. Log in at [strava.com](https://www.strava.com)
 2. Click **+** → **Upload Activity** → **Files**
-3. Select up to **25 TCX files** at a time from your `tcx_downloads/` folder
-4. Repeat — but remember the **30 files/day** limit
-5. **Free users:** Stop after 15 uploads or upgrade to continue
+3. Select **up to 15 TCX files** at a time from your `tcx_downloads/` folder
+4. Wait for the first batch to finish processing
+5. Upload the next batch of 15
+6. After **30 files in a day**, Strava may show **"try later"** — wait a few hours or resume the next day
 
-### Recommended upload strategy
+### Example: Uploading 109 files
 
-| Strava Plan | Strategy |
-|-------------|----------|
-| **Free** | Download only your 15 most recent or most important workouts using `--limit 15` |
-| **Paid** | Upload 25 files at a time, max 30/day — spread across days for large archives |
+| Day | Batches | Files uploaded |
+|-----|---------|---------------|
+| Day 1 | Batch 1 (15) + Batch 2 (15) | 30 |
+| Day 2 | Batch 3 (15) + Batch 4 (15) | 60 |
+| Day 3 | Batch 5 (15) + Batch 6 (15) | 90 |
+| Day 4 | Batch 7 (15) + remaining (19) | 109 ✅ |
 
 ---
 
@@ -188,14 +201,9 @@ Filename format: `{date}_{activity}_{workout_id}.tcx`
 =======================================================
   STRAVA UPLOAD LIMITS — READ BEFORE UPLOADING
 =======================================================
-  Free account : 15 TCX uploads lifetime (then manual entry only)
-  Paid account : Unlimited uploads
-  Daily limit  : 30 files per day (free and paid)
-  Bulk upload  : Up to 25 files at a time via web UI
-
-  ⚠️  You have 42 workouts — free Strava users can only
-      upload 15 before hitting the limit.
-  ⚠️  42 workouts will take at least 2 day(s) to upload
+  Batch size   : 15 files at a time
+  Daily limit  : ~30 files/day (2 batches of 15)
+  After 30/day : Strava says "try later" — wait a few hours or next day
 =======================================================
 
 [*] Downloading TCX files to 'tcx_downloads/' ...
@@ -213,11 +221,9 @@ All workouts downloaded!
 
 Upload to Strava:
   1. Go to strava.com -> + -> Upload Activity -> Files
-  2. Select up to 25 TCX files at a time
-  3. Max 30 files per day — spread uploads across days if needed
-
-  ⚠️  Free Strava accounts: only 15 uploads allowed lifetime.
-      Upgrade to Strava Summit for unlimited TCX uploads.
+  2. Select up to 15 TCX files at a time
+  3. After ~30 files/day Strava may say "try later"
+  4. Wait a few hours or continue next day
 ```
 
 ---
@@ -246,7 +252,10 @@ python -m pip install requests pandas tqdm
 ### Date filter not working
 Make sure to use `YYYY-MM-DD` format, e.g. `--from-date 2024-01-01`.
 
-### Some files failed
+### Strava says "try later"
+You have hit the daily upload limit (~30 files). Wait a few hours or try again the next day.
+
+### Some files failed to download
 Just re-run the same command. The script skips already-downloaded files and retries only the failed ones.
 
 ---

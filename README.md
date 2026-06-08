@@ -6,12 +6,26 @@ Works on **Mac, Windows, and Linux**.
 
 ---
 
+## ⚠️ Strava Upload Limits — Read First
+
+| Plan | Lifetime TCX uploads | Daily upload limit | Bulk upload (web UI) |
+|------|---------------------|--------------------|----------------------|
+| **Free** | **15 workouts only** | 30 files/day | Up to 25 files at a time |
+| **Paid (Summit)** | Unlimited | 30 files/day | Up to 25 files at a time |
+
+> ⚠️ **Free Strava users:** After 15 TCX uploads, Strava will not accept more file uploads. You will need to log activities manually or upgrade to a paid plan.
+>
+> ⚠️ **All users:** Maximum **30 files per day**. If you have more, spread uploads across multiple days.
+
+---
+
 ## How It Works
 
 1. You export your workout history from MapMyRun as a CSV
 2. The script reads the CSV, authenticates using your browser session cookies
-3. Downloads each workout as a `.tcx` file
-4. You bulk-upload the TCX files to Strava
+3. Optionally filter by date range (e.g. only 2024 workouts)
+4. Downloads each workout as a `.tcx` file
+5. You bulk-upload the TCX files to Strava
 
 ---
 
@@ -52,7 +66,7 @@ pip install requests pandas tqdm
 
 ## Step 2 — Get Your Browser Session Cookies
 
-The script uses your browser cookies to authenticate (same as being logged in on Chrome). You need to do this **once** before running.
+The script uses your browser cookies to authenticate. You need to do this **once** before running.
 
 1. Open [mapmyfitness.com](https://www.mapmyfitness.com) in **Chrome** and log in
 2. Open DevTools:
@@ -72,24 +86,48 @@ The script uses your browser cookies to authenticate (same as being logged in on
 
 ## Step 3 — Run the Script
 
-### Mac / Linux
+### Basic usage
+
+**Mac / Linux:**
 ```bash
-python3 download_from_csv.py --csv workout.csv --cookies 'PASTE_YOUR_COOKIE_STRING_HERE' --outdir tcx_downloads --limit 109 --delay 1.5
+python3 download_from_csv.py --csv workout.csv --cookies 'PASTE_YOUR_COOKIE_STRING_HERE' --outdir tcx_downloads
 ```
 
-### Windows (Command Prompt)
+**Windows:**
 ```cmd
-python download_from_csv.py --csv workout.csv --cookies "PASTE_YOUR_COOKIE_STRING_HERE" --outdir tcx_downloads --limit 109 --delay 1.5
+python download_from_csv.py --csv workout.csv --cookies "PASTE_YOUR_COOKIE_STRING_HERE" --outdir tcx_downloads
 ```
 
-### Windows (PowerShell)
-```powershell
-python download_from_csv.py --csv workout.csv --cookies "PASTE_YOUR_COOKIE_STRING_HERE" --outdir tcx_downloads --limit 109 --delay 1.5
+### Filter by date range
+
+Download only workouts between specific dates:
+
+**Mac / Linux:**
+```bash
+python3 download_from_csv.py --csv workout.csv --cookies 'YOUR_COOKIES' --from-date 2024-01-01 --to-date 2024-12-31 --outdir tcx_downloads
+```
+
+**Windows:**
+```cmd
+python download_from_csv.py --csv workout.csv --cookies "YOUR_COOKIES" --from-date 2024-01-01 --to-date 2024-12-31 --outdir tcx_downloads
+```
+
+You can also use only `--from-date` or only `--to-date`:
+```bash
+# Everything from 2023 onwards
+python3 download_from_csv.py --csv workout.csv --cookies 'YOUR_COOKIES' --from-date 2023-01-01
+
+# Everything up to end of 2022
+python3 download_from_csv.py --csv workout.csv --cookies 'YOUR_COOKIES' --to-date 2022-12-31
+```
+
+### Limit to first N records
+
+```bash
+python3 download_from_csv.py --csv workout.csv --cookies 'YOUR_COOKIES' --limit 15
 ```
 
 > ⚠️ **Important:** Run the command on a **single line**. Do not split it across multiple lines.
->
-> Note: Mac/Linux use **single quotes** `'` around the cookie string. Windows uses **double quotes** `"`.
 
 ---
 
@@ -100,29 +138,10 @@ python download_from_csv.py --csv workout.csv --cookies "PASTE_YOUR_COOKIE_STRIN
 | `--csv` | ✅ Yes | — | Path to your exported CSV file |
 | `--cookies` | ✅ Yes | — | Cookie string copied from browser DevTools |
 | `--outdir` | No | `tcx_downloads` | Folder where TCX files will be saved |
+| `--from-date` | No | — | Only download workouts on or after this date (`YYYY-MM-DD`) |
+| `--to-date` | No | — | Only download workouts on or before this date (`YYYY-MM-DD`) |
 | `--limit` | No | All records | Process only the first N workouts |
 | `--delay` | No | `1.5` | Seconds to wait between downloads (avoid rate limiting) |
-
----
-
-## Examples
-
-**Download all workouts (Mac):**
-```bash
-python3 download_from_csv.py --csv workout.csv --cookies 'YOUR_COOKIES' --outdir tcx_downloads
-```
-
-**Download only the first 109 workouts (Mac):**
-```bash
-python3 download_from_csv.py --csv workout.csv --cookies 'YOUR_COOKIES' --outdir tcx_downloads --limit 109
-```
-
-**Download all workouts (Windows):**
-```cmd
-python download_from_csv.py --csv workout.csv --cookies "YOUR_COOKIES" --outdir tcx_downloads
-```
-
-**Resume an interrupted download** — already downloaded files are skipped automatically, just re-run the same command.
 
 ---
 
@@ -130,9 +149,16 @@ python download_from_csv.py --csv workout.csv --cookies "YOUR_COOKIES" --outdir 
 
 1. Log in at [strava.com](https://www.strava.com)
 2. Click **+** → **Upload Activity** → **Files**
-3. Select TCX files from your `tcx_downloads/` folder
-4. Strava supports **up to 25 files at a time** in bulk upload
-5. Repeat until all files are uploaded
+3. Select up to **25 TCX files** at a time from your `tcx_downloads/` folder
+4. Repeat — but remember the **30 files/day** limit
+5. **Free users:** Stop after 15 uploads or upgrade to continue
+
+### Recommended upload strategy
+
+| Strava Plan | Strategy |
+|-------------|----------|
+| **Free** | Download only your 15 most recent or most important workouts using `--limit 15` |
+| **Paid** | Upload 25 files at a time, max 30/day — spread across days for large archives |
 
 ---
 
@@ -156,21 +182,42 @@ Filename format: `{date}_{activity}_{workout_id}.tcx`
 [*] Verifying session cookies ...
 [OK] Session is valid.
 
-[*] Found 109 workouts to process.
+[*] After date filter (2024-01-01 to 2024-12-31): 42 workouts
+[*] Found 42 workouts to process.
+
+=======================================================
+  STRAVA UPLOAD LIMITS — READ BEFORE UPLOADING
+=======================================================
+  Free account : 15 TCX uploads lifetime (then manual entry only)
+  Paid account : Unlimited uploads
+  Daily limit  : 30 files per day (free and paid)
+  Bulk upload  : Up to 25 files at a time via web UI
+
+  ⚠️  You have 42 workouts — free Strava users can only
+      upload 15 before hitting the limit.
+  ⚠️  42 workouts will take at least 2 day(s) to upload
+=======================================================
+
 [*] Downloading TCX files to 'tcx_downloads/' ...
 
-100%|████████████████████| 109/109 [02:45<00:00, workout]
+100%|████████████████████| 42/42 [01:10<00:00, workout]
 
---------------------------------------------------
-Downloaded      : 107
-Skipped (cached): 2
+-------------------------------------------------------
+Downloaded      : 42
+Skipped (cached): 0
 Failed          : 0
 Files saved to  : /Users/yourname/tcx_downloads
---------------------------------------------------
+-------------------------------------------------------
 
 All workouts downloaded!
-Upload to Strava: Upload Activity -> Files -> select all TCX files
-Note: Strava allows up to 25 files at a time in bulk upload.
+
+Upload to Strava:
+  1. Go to strava.com -> + -> Upload Activity -> Files
+  2. Select up to 25 TCX files at a time
+  3. Max 30 files per day — spread uploads across days if needed
+
+  ⚠️  Free Strava accounts: only 15 uploads allowed lifetime.
+      Upgrade to Strava Summit for unlimited TCX uploads.
 ```
 
 ---
@@ -189,13 +236,15 @@ Your cookies have expired. Go back to Chrome, refresh mapmyfitness.com, re-copy 
 ```
 
 ### `python3` not recognized on Windows
-Use `python` instead of `python3` — Windows uses `python` by default.
+Use `python` instead of `python3`.
 
 ### `pip` not found on Windows
-Try `pip3` or run:
 ```cmd
 python -m pip install requests pandas tqdm
 ```
+
+### Date filter not working
+Make sure to use `YYYY-MM-DD` format, e.g. `--from-date 2024-01-01`.
 
 ### Some files failed
 Just re-run the same command. The script skips already-downloaded files and retries only the failed ones.
@@ -205,7 +254,7 @@ Just re-run the same command. The script skips already-downloaded files and retr
 ## Notes
 
 - Cookie sessions typically last **a few hours**. For large exports (200+ workouts), you may need to refresh cookies mid-run.
-- The `--delay 1.5` default adds a 1.5s pause between requests to avoid being rate-limited by MapMyFitness.
+- The `--delay 1.5` default adds a 1.5s pause between requests to avoid rate-limiting by MapMyFitness.
 - The script is fully **resumable** — safe to stop and restart at any time.
 
 ---

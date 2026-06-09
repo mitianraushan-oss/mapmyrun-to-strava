@@ -5,3 +5,6 @@ mmf_workouts.csv
 __pycache__/
 *.pyc
 .venv/
+.DS_Store
+README.md.bak
+README_section.md

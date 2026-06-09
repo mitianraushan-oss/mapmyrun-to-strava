@@ -293,3 +293,136 @@ tqdm
 ## License
 
 MIT
+## 🗓️ Export Workouts by Date Range
+
+In addition to downloading your full history, you can export workouts for a **specific date range** using the `mmf_export_csv.py` script — then download only those TCX files.
+
+---
+
+### Prerequisites
+
+```bash
+pip install requests pandas tqdm python-dotenv
+```
+
+---
+
+### 1. Set Up Authentication (one time only)
+
+Create a `.env` file in the project root:
+
+```
+MMF_COOKIE=paste_your_full_cookie_string_here
+```
+
+**How to get your cookie string (Chrome):**
+1. Go to [mapmyfitness.com](https://www.mapmyfitness.com) and log in
+2. Open DevTools → `Cmd+Option+I` (Mac) / `F12` (Windows)
+3. Go to **Network** tab → refresh the page
+4. Click any request to `mapmyfitness.com`
+5. Under **Request Headers** → find `cookie:` → copy the entire value
+6. Paste it into `.env` as `MMF_COOKIE=<value>`
+
+> ⚠️ Never commit `.env` to git. It's already in `.gitignore`.
+
+---
+
+### 2. Export Workouts to CSV
+
+```bash
+python3 mmf_export_csv.py --start 2026-01-01 --end 2026-06-09
+```
+
+This creates `mmf_workouts.csv` with one row per workout containing:
+
+| Column | Description |
+|---|---|
+| `workout_id` | Unique workout ID |
+| `name` | Workout name |
+| `start_datetime` | Start time (ISO8601 UTC) |
+| `start_locale_timezone` | Local timezone |
+| `activity_type_id` | Activity type (9=Walk, 16=Run, etc.) |
+| `distance_km` / `distance_miles` | Distance |
+| `duration_hms` | Duration (HH:MM:SS) |
+| `calories_kcal` | Calories burned |
+| `avg_speed_kmh` / `avg_speed_mph` | Average speed |
+| `avg_heart_rate` / `max_heart_rate` | Heart rate |
+| `steps_total` | Step count |
+| `source` | App/device used |
+| `workout_url` | Direct link to workout |
+
+**Optional flags:**
+
+```bash
+# Save to a custom filename
+python3 mmf_export_csv.py --start 2026-01-01 --end 2026-06-09 --out my_runs.csv
+
+# Override cookie from CLI (instead of .env)
+python3 mmf_export_csv.py --start 2026-01-01 --end 2026-06-09 --cookie "cookie_string"
+```
+
+---
+
+### 3. Download TCX Files
+
+```bash
+python3 download_from_csv.py --csv mmf_workouts.csv
+```
+
+TCX files are saved to `tcx_downloads/` by default.
+
+**Optional flags:**
+
+```bash
+# Custom output folder
+python3 download_from_csv.py --csv mmf_workouts.csv --outdir my_tcx_files
+
+# Filter by date range within the CSV
+python3 download_from_csv.py --csv mmf_workouts.csv --from-date 2026-06-01 --to-date 2026-06-09
+
+# Limit to first N workouts (useful for testing)
+python3 download_from_csv.py --csv mmf_workouts.csv --limit 5
+
+# Slower download speed (increase delay if getting rate limited)
+python3 download_from_csv.py --csv mmf_workouts.csv --delay 3
+```
+
+> ✅ Already-downloaded files are skipped on re-run — safe to re-run if interrupted.
+
+---
+
+### 4. Upload to Strava
+
+1. Go to [strava.com](https://www.strava.com) → **+** → **Upload Activity** → **Files**
+2. Select up to **25 TCX files** at a time
+3. Maximum **30 files per day** (free and paid accounts)
+
+> ⚠️ **Free Strava accounts** are limited to **15 TCX uploads lifetime**.  
+> Upgrade to Strava Summit for unlimited uploads.
+
+---
+
+### Full Example
+
+```bash
+# Export June 2026 workouts
+python3 mmf_export_csv.py --start 2026-06-01 --end 2026-06-30
+
+# Download all as TCX
+python3 download_from_csv.py --csv mmf_workouts.csv
+
+# Upload tcx_downloads/*.tcx to Strava (max 25 at a time)
+```
+
+---
+
+### Troubleshooting
+
+| Error | Fix |
+|---|---|
+| `Session expired / invalid` | Re-copy fresh cookies from browser into `.env` |
+| `Found 0 workouts` | Check date range — workouts may use `mapmyrun.com` URLs |
+| `python-dotenv could not parse` | Ignore this warning — cookies still load correctly |
+| `KeyError: Link` | You're using the new `mmf_workouts.csv` format — use updated `download_from_csv.py` |
+| `401 Unauthorized` | Cookie expired — refresh from browser |
+

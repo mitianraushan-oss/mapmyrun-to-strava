@@ -1,0 +1,7 @@
+.env
+.mmf_cookies.json
+tcx_downloads/
+mmf_workouts.csv
+__pycache__/
+*.pyc
+.venv/

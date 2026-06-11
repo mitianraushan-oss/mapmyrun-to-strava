@@ -76,6 +76,20 @@ HEADERS_BASE = {
 STRAVA_FREE_LIMIT  = 15   # max TCX uploads for free Strava accounts
 STRAVA_DAILY_LIMIT = 30   # max uploads per day (free and paid)
 
+# MapMyFitness activity_type_id → Strava TCX Sport tag
+# Strava recognises: Running, Biking, Walking, Hiking, Other
+ACTIVITY_SPORT_MAP = {
+    "9":   "Walking",   # Walk
+    "16":  "Running",   # Run
+    "11":  "Biking",    # Cycling
+    "12":  "Hiking",    # Hiking
+    "14":  "Running",   # Trail Run
+    "15":  "Running",   # Treadmill
+    "17":  "Biking",    # Indoor Cycling
+    "18":  "Walking",   # Elliptical (closest match)
+    "320": "Walking",   # Stair Climber
+}
+
 
 # -- Cookie helpers -----------------------------------------------------------
 
@@ -146,6 +160,7 @@ def load_workout_ids(csv_path, limit=None, from_date=None, to_date=None):
 
     df = df[df[url_col].notna()].copy()
     df = df[df[url_col].str.contains("mapmyrun.com/workout/|mapmyfitness.com/workout/", na=False)]
+
     # -- Date range filter ----------------------------------------------------
     if from_date or to_date:
         def in_range(date_val):
@@ -195,7 +210,7 @@ def load_workout_ids(csv_path, limit=None, from_date=None, to_date=None):
 def download_tcx(session, workout, outdir):
     """Download a single workout as TCX. Returns status string."""
     wid      = workout["workout_id"]
-    filename = outdir / "{}_{} {}.tcx".format(
+    filename = outdir / "{}_{}_{}.tcx".format(
         workout["date"], workout["activity"], wid
     )
 
@@ -215,7 +230,18 @@ def download_tcx(session, workout, outdir):
     if resp.status_code == 200 and (
         content.startswith("<?xml") or content.startswith("<TrainingCenterDatabase")
     ):
-        filename.write_text(resp.text, encoding="utf-8")
+        # Patch Sport tag based on activity_type_id
+        # MapMyFitness writes Sport="Other" for all activities
+        # We replace it with the correct Strava-recognised value
+        activity_id = str(workout.get("activity", ""))
+        sport = ACTIVITY_SPORT_MAP.get(activity_id, "Other")
+        patched = re.sub(
+            r'Sport="[^"]*"',
+            f'Sport="{sport}"',
+            resp.text,
+            count=1
+        )
+        filename.write_text(patched, encoding="utf-8")
         return "ok"
 
     # Detect session expiry

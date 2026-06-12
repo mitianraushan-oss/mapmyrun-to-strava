@@ -1,12 +1,37 @@
 # MapMyRun → Strava TCX Downloader
 
-A Python-based tool to **bulk-download your MapMyRun / MapMyFitness workouts as TCX files** for a specific date range and upload them to **Strava**.
+Bulk-download your **MapMyRun / MapMyFitness workouts as TCX files** for a specific date range and upload them to **Strava**.
+
+No API key or OAuth registration needed — uses your browser session cookies.
 
 Works on **Mac, Windows, and Linux**.
 
 ---
 
-## How It Works
+## Option A — Web App (no Python required)
+
+A point-and-click UI that runs in your browser.
+
+**Run locally:**
+```bash
+git clone https://github.com/mitianraushan-oss/mapmyrun-to-strava.git
+cd mapmyrun-to-strava
+pip3 install -r requirements.txt
+streamlit run app.py
+```
+Then open **http://localhost:8501**, paste your cookie, pick a date range, and download.
+
+**Self-host on Render.com (free tier):**
+
+1. Fork this repo on GitHub
+2. Go to [render.com](https://render.com) → New → Web Service
+3. Connect your fork — Render auto-detects `render.yaml` and deploys
+
+> 🔒 **Privacy:** Cookies are used only within your session and are never stored.
+
+---
+
+## Option B — Command-line scripts
 
 ```
 Step 1 → Set up .env with your browser cookies (once)
@@ -14,8 +39,6 @@ Step 2 → Export workouts for a date range to CSV  (mmf_export_csv.py)
 Step 3 → Download TCX files from that CSV          (download_from_csv.py)
 Step 4 → Upload TCX files to Strava                (web UI, 15 at a time)
 ```
-
-No API key or OAuth registration needed — uses your browser session cookies.
 
 ---
 
@@ -175,7 +198,7 @@ TCX files are saved to `tcx_downloads/` by default.
 | `--from-date` | No | — | Only download workouts on/after this date |
 | `--to-date` | No | — | Only download workouts on/before this date |
 | `--limit` | No | All | Process only first N workouts (good for testing) |
-| `--delay` | No | `1.5` | Seconds between downloads (increase if rate limited) |
+| `--delay` | No | `1.0` | Seconds between downloads (increase if rate limited) |
 | `--cookies` | No | reads `.env` | Override cookie from CLI |
 
 ### Examples
@@ -276,7 +299,7 @@ python3 download_from_csv.py --csv mmf_workouts.csv
 ## Notes
 
 - Cookie sessions typically last **a few hours**. For large exports (200+ workouts), you may need to refresh cookies mid-run.
-- The `--delay 1.5` default adds a 1.5s pause between requests to avoid rate-limiting.
+- The `--delay 1.0` default adds a 1s pause between requests to avoid rate-limiting.
 - Both scripts share the same `.env` file — set up once, works for both.
 
 ---
@@ -299,6 +322,7 @@ requests
 pandas
 tqdm
 python-dotenv
+streamlit        # web app only
 ```
 
 ---

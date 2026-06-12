@@ -9,3 +9,6 @@ __pycache__/
 README.md.bak
 README_section.md
 myrun.txt
+requirement.txt
+cli_backup/
+Strava_Ready_Files/

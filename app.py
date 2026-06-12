@@ -66,10 +66,7 @@ with st.sidebar:
 
     st.divider()
 
-    st.caption(
-        "🔒 **Privacy:** Your cookies are used only for this session "
-        "and never stored on our servers."
-    )
+    st.caption("🔒 Cookies are session-only and never stored. See notices on the main page.")
 
     st.divider()
 
@@ -84,6 +81,19 @@ st.title("MapMyFitness Exporter")
 st.markdown(
     "Export your workouts to **CSV** and download **TCX files** ready for Strava import.\n\n"
     "Paste your browser cookie in the sidebar, pick a date range, then follow the steps below."
+)
+
+st.info(
+    "🔒 **Privacy:** Your cookies are used only for this session and are never stored on our "
+    "servers. They are discarded immediately after your TCX files are downloaded.",
+    icon=None,
+)
+
+st.info(
+    "📸 **Photos:** Workout photos from MapMyRun are not transferred. TCX format does not "
+    "support photos. To migrate photos, save them from MapMyRun manually and upload to each "
+    "Strava activity individually.",
+    icon=None,
 )
 
 st.divider()

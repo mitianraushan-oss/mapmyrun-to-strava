@@ -65,20 +65,22 @@ with st.sidebar:
 
     st.divider()
 
-    st.caption("🔒 Cookies are session-only and never stored. See notices on the main page.")
-
-    st.divider()
-
     # ── Donate placeholder ────────────────────────────────────────────────────
     # Uncomment and add your link when ready:
     # st.link_button("☕ Buy me a coffee", "https://your-donate-link-here")
     st.caption("*Donate link coming soon.*")
 
     st.divider()
+
+    st.markdown("**ℹ️ About This Tool**")
     st.caption(
-        "⚠️ **Disclaimer:** This tool is not affiliated with or endorsed by MapMyFitness, "
-        "Under Armour, or Strava. It accesses only your own workout data using your own "
-        "browser credentials."
+        "👨‍💻 Open source: [github.com/mitianraushan-oss/mapmyrun-to-strava]"
+        "(https://github.com/mitianraushan-oss/mapmyrun-to-strava)\n\n"
+        "⚠️ Not affiliated with MapMyFitness, Under Armour, or Strava\n\n"
+        "🔒 Your cookies are never stored on our servers\n\n"
+        "🗑️ All session data is deleted immediately after download\n\n"
+        "⏱️ Requests are rate-limited to respect MapMyFitness servers\n\n"
+        "🛡️ You access only your own workout data"
     )
 
 # ── Main content ──────────────────────────────────────────────────────────────

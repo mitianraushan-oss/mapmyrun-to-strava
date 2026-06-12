@@ -33,15 +33,14 @@ with st.sidebar:
     st.caption("Export your MapMyFitness workouts")
 
     st.subheader("Authentication")
-    cookie = st.text_area(
+    cookie = st.text_input(
         "Browser Cookie",
-        placeholder=(
-            "Paste your MMF cookie here.\n\n"
+        type="password",
+        placeholder="Paste your MMF cookie here (masked for privacy)",
+        help=(
             "Chrome: DevTools → Network → any mapmyfitness.com request "
-            "→ Request Headers → cookie:"
+            "→ Request Headers → cookie: — copy the entire value."
         ),
-        height=130,
-        help="Copy the full cookie string from your browser's DevTools.",
     )
 
     with st.expander("Advanced (API key)"):
@@ -74,6 +73,13 @@ with st.sidebar:
     # Uncomment and add your link when ready:
     # st.link_button("☕ Buy me a coffee", "https://your-donate-link-here")
     st.caption("*Donate link coming soon.*")
+
+    st.divider()
+    st.caption(
+        "⚠️ **Disclaimer:** This tool is not affiliated with or endorsed by MapMyFitness, "
+        "Under Armour, or Strava. It accesses only your own workout data using your own "
+        "browser credentials."
+    )
 
 # ── Main content ──────────────────────────────────────────────────────────────
 

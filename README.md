@@ -12,6 +12,10 @@ Works on **Mac, Windows, and Linux**.
 
 A point-and-click UI that runs in your browser.
 
+**Live app:** [https://mapmyrun-to-strava.onrender.com](https://mapmyrun-to-strava.onrender.com)
+
+> Free tier — spins down after 15 min of inactivity; first load may take ~30 seconds.
+
 **Run locally:**
 ```bash
 git clone https://github.com/mitianraushan-oss/mapmyrun-to-strava.git

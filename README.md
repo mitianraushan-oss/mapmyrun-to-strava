@@ -331,6 +331,25 @@ streamlit        # web app only
 
 ---
 
+## ☕ Support this tool
+
+This tool is free and open source. If it saved you time, consider supporting its upkeep — it keeps the hosted app running and free for everyone.
+
+- 🌍 **International** — [Buy me a coffee via PayPal](https://paypal.me/raushankumar2804)
+- 🇮🇳 **India** — [Buy me a coffee via Razorpay (UPI / Cards)](https://razorpay.me/@raushankumaross)
+  - Or pay by UPI ID: `raushankumaross114988.rzp@rxairtel` (GPay / PhonePe / Paytm / BHIM)
+
+The hosted web app shows the right option automatically based on your region, with a manual toggle either way.
+
+---
+
+## Disclaimer
+
+⚠️ This tool is not affiliated with or endorsed by MapMyFitness, Under Armour, or Strava.
+It accesses only your own workout data using your own browser credentials.
+
+---
+
 ## License
 
 MIT

@@ -65,10 +65,9 @@ with st.sidebar:
 
     st.divider()
 
-    # ── Donate placeholder ────────────────────────────────────────────────────
-    # Uncomment and add your link when ready:
-    # st.link_button("☕ Buy me a coffee", "https://your-donate-link-here")
-    st.caption("*Donate link coming soon.*")
+    # ── Donate ────────────────────────────────────────────────────────────────
+    st.link_button("☕ Buy me a coffee", "https://paypal.me/raushankumar2804")
+    st.caption("*If this tool saved you time, consider supporting it.*")
 
     st.divider()
 

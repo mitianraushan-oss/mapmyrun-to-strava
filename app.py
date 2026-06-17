@@ -3,6 +3,7 @@ app.py — MapMyFitness Exporter
 Streamlit web UI: export workouts to CSV and download TCX files as a ZIP.
 """
 import io
+import os
 import time
 import zipfile
 from datetime import date, timedelta
@@ -11,6 +12,35 @@ import streamlit as st
 
 import mmf_api
 import mmf_downloader
+
+# ── Donate config ───────────────────────────────────────────────────────────────
+
+PAYPAL_URL = "https://paypal.me/raushankumar2804"
+RAZORPAY_URL = "https://razorpay.me/@raushankumaross"
+UPI_ID = "raushankumaross114988.rzp@rxairtel"
+QR_IMAGE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "razorpay_upi_qr.jpeg")
+
+
+def _visitor_in_india() -> bool:
+    """Best-effort India detection from the browser's own timezone/locale.
+
+    Uses st.context (browser-reported, no IP sent to any third party) so it
+    respects the app's privacy promises. Only chooses the *default* region —
+    the user can always override with the radio below.
+    """
+    try:
+        tz = (st.context.timezone or "")
+    except Exception:
+        tz = ""
+    try:
+        locale = (st.context.locale or "")
+    except Exception:
+        locale = ""
+    if tz == "Asia/Kolkata":
+        return True
+    if locale and locale.replace("_", "-").upper().endswith("-IN"):
+        return True
+    return False
 
 # ── Page config ───────────────────────────────────────────────────────────────
 
@@ -79,8 +109,23 @@ with st.sidebar:
     st.divider()
 
     # ── Donate ────────────────────────────────────────────────────────────────
+    st.markdown("**☕ Support this tool**")
+
+    region = st.radio(
+        "Your region",
+        ["🇮🇳 India", "🌍 International"],
+        index=0 if _visitor_in_india() else 1,
+        horizontal=True,
+        label_visibility="collapsed",
+    )
+
+    if region.startswith("🇮🇳"):
+        pay_url, pay_label = RAZORPAY_URL, "☕ Buy me a coffee · UPI / Cards"
+    else:
+        pay_url, pay_label = PAYPAL_URL, "☕ Buy me a coffee · PayPal"
+
     st.markdown(
-        """
+        f"""
         <div style="
             background: linear-gradient(135deg, #FFF3CD 0%, #FFE0B2 100%);
             border: 1px solid #FFCC80;
@@ -88,7 +133,7 @@ with st.sidebar:
             padding: 16px;
             text-align: center;
         ">
-            <a href="https://paypal.me/raushankumar2804" target="_blank"
+            <a href="{pay_url}" target="_blank" rel="noopener"
                style="
                    display: inline-block;
                    background: linear-gradient(135deg, #FFC107 0%, #FF9800 100%);
@@ -99,7 +144,7 @@ with st.sidebar:
                    padding: 10px 20px;
                    border-radius: 8px;
                    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-               ">☕ Buy me a coffee</a>
+               ">{pay_label}</a>
             <div style="
                 margin-top: 10px;
                 font-size: 0.85rem;
@@ -109,6 +154,12 @@ with st.sidebar:
         """,
         unsafe_allow_html=True,
     )
+
+    if region.startswith("🇮🇳"):
+        with st.expander("📱 Or scan UPI QR (GPay / PhonePe / Paytm / BHIM)"):
+            if os.path.exists(QR_IMAGE_PATH):
+                st.image(QR_IMAGE_PATH, use_container_width=True)
+            st.caption(f"UPI ID: `{UPI_ID}`")
 
 # ── Main content ──────────────────────────────────────────────────────────────
 

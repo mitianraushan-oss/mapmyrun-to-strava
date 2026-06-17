@@ -65,12 +65,6 @@ with st.sidebar:
 
     st.divider()
 
-    # ── Donate ────────────────────────────────────────────────────────────────
-    st.link_button("☕ Buy me a coffee", "https://paypal.me/raushankumar2804")
-    st.caption("*If this tool saved you time, consider supporting it.*")
-
-    st.divider()
-
     st.markdown("**ℹ️ About This Tool**")
     st.caption(
         "👨‍💻 Open source: [github.com/mitianraushan-oss/mapmyrun-to-strava]"
@@ -80,6 +74,40 @@ with st.sidebar:
         "🗑️ All session data is deleted immediately after download\n\n"
         "⏱️ Requests are rate-limited to respect MapMyFitness servers\n\n"
         "🛡️ You access only your own workout data"
+    )
+
+    st.divider()
+
+    # ── Donate ────────────────────────────────────────────────────────────────
+    st.markdown(
+        """
+        <div style="
+            background: linear-gradient(135deg, #FFF3CD 0%, #FFE0B2 100%);
+            border: 1px solid #FFCC80;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        ">
+            <a href="https://paypal.me/raushankumar2804" target="_blank"
+               style="
+                   display: inline-block;
+                   background: linear-gradient(135deg, #FFC107 0%, #FF9800 100%);
+                   color: #3E2723;
+                   font-weight: 700;
+                   font-size: 1rem;
+                   text-decoration: none;
+                   padding: 10px 20px;
+                   border-radius: 8px;
+                   box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+               ">☕ Buy me a coffee</a>
+            <div style="
+                margin-top: 10px;
+                font-size: 0.85rem;
+                color: #5D4037;
+            ">If this tool saved you time, consider supporting!</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
 # ── Main content ──────────────────────────────────────────────────────────────

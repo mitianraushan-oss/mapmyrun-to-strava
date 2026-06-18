@@ -8,6 +8,32 @@ Works on **Mac, Windows, and Linux**.
 
 ---
 
+## 🎬 Demo & How to Use
+
+![Walkthrough of the MapMyFitness Exporter web app](assets/screenshots/walkthrough.gif)
+
+*(Prefer video? See [`assets/screenshots/walkthrough.mp4`](assets/screenshots/walkthrough.mp4).)*
+
+**Step by step:**
+
+1. **Paste your browser cookie** in the sidebar (it's masked and never stored).
+
+   ![Authentication](assets/screenshots/02_auth.png)
+
+2. **Pick a date range** and, optionally, adjust the download delay.
+
+3. **Run Step 1 — Export Workouts to CSV**, then **Step 2 — Download TCX Files** (a ZIP ready for Strava import).
+
+   ![Export steps](assets/screenshots/04_steps.png)
+
+4. **Like the tool?** Support it from the sidebar — UPI/Razorpay for India, PayPal for everyone else.
+
+   ![Support this tool](assets/screenshots/07_donate_india.png)
+
+> ℹ️ The screenshots use a placeholder cookie — your real workout list appears after you paste your own MapMyFitness cookie.
+
+---
+
 ## Option A — Web App (no Python required)
 
 A point-and-click UI that runs in your browser.
